@@ -1,9 +1,12 @@
 import { ForgotPasswordForm } from '@/components/auth/forgot-password-form'
-import Link from 'next/link'
 import { Suspense } from 'react'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
+import { AuthShell } from '@/components/auth/auth-shell'
+import type { Metadata } from 'next'
 
-/* eslint-disable @next/next/no-img-element */
+export const metadata: Metadata = {
+  title: 'DataPro - Esqueceu a senha?',
+}
 
 function ForgotPasswordFormWrapper() {
   return (
@@ -20,37 +23,23 @@ function ForgotPasswordFormWrapper() {
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="bg-white flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-col gap-6">
-          {/* Header */}
-          <div className="flex flex-col items-center gap-4 text-center">
-            <img
-              src="/logo_bussola.svg"
-              alt="Bússola ByDevIngá"
-              style={{ height: '60px', width: 'auto' }}
-            />
-            <h1 className="text-xl font-bold text-gray-900">Recuperar Senha</h1>
-            <p className="text-sm text-gray-500">
-              Informe seu email para receber as instruções
-            </p>
-          </div>
-
-          {/* Form */}
-          <ForgotPasswordFormWrapper />
-
-          {/* Back to Login Link */}
-          <div className="text-center">
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-2 text-sm text-[#4F46E5] hover:text-[#02403D] hover:underline transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar para o login
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
+    <AuthShell
+      title="Recuperar senha"
+      description={(
+        <p className="text-muted-foreground text-balance">
+          Informe seu email para receber as instruções.
+        </p>
+      )}
+      logoAlt="DataPro by MD4Tech - Inteligência analítica para negócios"
+      sideImageSrc="/login.svg"
+      sideImageDarkSrc="/dark-login.svg"
+      sideImageAlt="Ilustração de login"
+      mobileLogoLightSrc="/light-logo.svg"
+      mobileLogoDarkSrc="/dark-logo.svg"
+      mobileLogoAlt="DataPro by MD4Tech - Inteligência analítica para negócios"
+      footer={undefined}
+    >
+      <ForgotPasswordFormWrapper />
+    </AuthShell>
   )
 }

@@ -226,7 +226,7 @@ if (error) {
 **Implementação**: `forgot-password-form.tsx` (linha 107-118)
 ```typescript
 <a 
-  href="https://wa.me/5544997223315" 
+  href="https://wa.me/554499510755" 
   target="_blank" 
   rel="noopener noreferrer"
   className="flex items-center justify-center gap-2 text-sm text-blue-600 hover:underline"

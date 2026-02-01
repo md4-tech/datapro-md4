@@ -1793,7 +1793,7 @@ R:
 
 **Desenvolvido por:** Equipe BI SaaS
 **Suporte:** suporte@bisaas.com.br
-**Documentação:** [github.com/bi-saas/docs](https://github.com)
+**Documentação:** [github.com/datapro-md4/docs](https://github.com)
 
 ---
 

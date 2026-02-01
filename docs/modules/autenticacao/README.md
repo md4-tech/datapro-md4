@@ -235,7 +235,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 Para dúvidas ou problemas com autenticação:
 - WhatsApp: +55 44 99722-3315
-- Email: suporte@devinga.com.br
+- Email: ajuda@md4tech.com.br
 
 ---
 

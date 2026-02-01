@@ -10,8 +10,11 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "DevIngá - Business Intelligence",
+  title: "DataPro - Seus Dashboards e Relatórios",
   description: "Sistema de Business Intelligence SaaS",
+  icons: {
+    icon: "/flaticon.ico",
+  },
 };
 
 export default function RootLayout({

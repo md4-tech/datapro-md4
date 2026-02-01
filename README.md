@@ -80,7 +80,7 @@ Sistema de Business Intelligence SaaS multi-tenant com dashboard moderno, autent
 1. **Clone o repositório**
 ```bash
 git clone <repo-url>
-cd bi-saas
+cd datapro-md4
 ```
 
 2. **Instale as dependências**
@@ -151,7 +151,7 @@ npm run clean:all
 ## 📁 Estrutura do Projeto
 
 ```
-bi-saas/
+datapro-md4/
 ├── src/
 │   ├── app/
 │   │   ├── (auth)/              # Páginas de autenticação

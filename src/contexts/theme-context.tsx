@@ -3,7 +3,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-type Theme = 'light' | 'dark'
+type Theme = 'light' | 'dark' | 'system'
+
+const FORCED_THEME: Theme | null = null
 
 interface ThemeContextType {
   theme: Theme
@@ -12,6 +14,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+const SYSTEM_MEDIA_QUERY = '(prefers-color-scheme: dark)'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('light')
@@ -22,6 +25,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const loadTheme = async () => {
       try {
+        if (FORCED_THEME) {
+          setThemeState(FORCED_THEME)
+          applyTheme(FORCED_THEME)
+          return
+        }
+        const localTheme = localStorage.getItem('theme') as Theme | null
+        if (localTheme === 'light' || localTheme === 'dark' || localTheme === 'system') {
+          setThemeState(localTheme)
+          applyTheme(localTheme)
+          return
+        }
         // Check if user is logged in
         const { data: { user } } = await supabase.auth.getUser()
 
@@ -34,35 +48,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             .single()
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((profile as any)?.theme_preference) {
+          if ((profile as any)?.theme_preference === 'light' || (profile as any)?.theme_preference === 'dark') {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const savedTheme = (profile as any).theme_preference as Theme
             setThemeState(savedTheme)
             applyTheme(savedTheme)
           } else {
             // Use system preference if no saved preference
-            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-            setThemeState(systemTheme)
-            applyTheme(systemTheme)
+            setThemeState('system')
+            applyTheme('system')
           }
         } else {
           // Not logged in - use localStorage or system preference
-          const localTheme = localStorage.getItem('theme') as Theme
-          if (localTheme) {
-            setThemeState(localTheme)
-            applyTheme(localTheme)
-          } else {
-            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-            setThemeState(systemTheme)
-            applyTheme(systemTheme)
-          }
+          setThemeState('system')
+          applyTheme('system')
         }
       } catch (error) {
         console.error('Error loading theme:', error)
         // Fallback to system preference
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        setThemeState(systemTheme)
-        applyTheme(systemTheme)
+        setThemeState('system')
+        applyTheme('system')
       } finally {
         setIsLoading(false)
       }
@@ -73,14 +78,37 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement
-    if (newTheme === 'dark') {
+    const resolvedTheme = newTheme === 'system'
+      ? (window.matchMedia(SYSTEM_MEDIA_QUERY).matches ? 'dark' : 'light')
+      : newTheme
+
+    if (resolvedTheme === 'dark') {
       root.classList.add('dark')
     } else {
       root.classList.remove('dark')
     }
   }
 
+  useEffect(() => {
+    if (theme !== 'system') return
+    const media = window.matchMedia(SYSTEM_MEDIA_QUERY)
+    const handleChange = () => applyTheme('system')
+
+    if (media.addEventListener) {
+      media.addEventListener('change', handleChange)
+      return () => media.removeEventListener('change', handleChange)
+    }
+
+    media.addListener(handleChange)
+    return () => media.removeListener(handleChange)
+  }, [theme])
+
   const setTheme = async (newTheme: Theme) => {
+    if (FORCED_THEME) {
+      setThemeState(FORCED_THEME)
+      applyTheme(FORCED_THEME)
+      return
+    }
     setThemeState(newTheme)
     applyTheme(newTheme)
     localStorage.setItem('theme', newTheme)
@@ -88,7 +116,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Save to database if user is logged in
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
+      if (user && (newTheme === 'light' || newTheme === 'dark')) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const supabaseClient = supabase as any
         await supabaseClient

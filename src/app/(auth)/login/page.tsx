@@ -1,8 +1,12 @@
 import { LoginForm } from '@/components/auth/login-form'
 import { Suspense } from 'react'
 import { Loader2 } from 'lucide-react'
+import { AuthShell } from '@/components/auth/auth-shell'
+import type { Metadata } from 'next'
 
-/* eslint-disable @next/next/no-img-element */
+export const metadata: Metadata = {
+  title: 'DataPro - Login',
+}
 
 function LoginFormWrapper() {
   return (
@@ -19,35 +23,22 @@ function LoginFormWrapper() {
 
 export default function LoginPage() {
   return (
-    <div className="bg-white flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-col gap-6">
-          {/* Header */}
-          <div className="flex flex-col items-center gap-4 text-center">
-            <img
-              src="/logo_bussola.svg"
-              alt="Bússola ByDevIngá"
-              style={{ height: '60px', width: 'auto' }}
-            />
-            <h1 className="text-xl font-bold text-gray-900">Bem-vindo ao Bússola 360</h1>
-            <p className="text-sm text-gray-600">Inteligência para negócios</p>
-            <p className="text-sm text-gray-500">
-              Não possui uma conta?{' '}
-              <a
-                href="https://wa.me/5544997223315"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#4F46E5] hover:text-[#02403D] hover:underline transition-colors"
-              >
-                Solicite aqui.
-              </a>
-            </p>
-          </div>
-
-          {/* Form */}
-          <LoginFormWrapper />
-        </div>
-      </div>
-    </div>
+    <AuthShell
+      title="Bem-vindo de volta ao DataPro"
+      description={(
+        <p className="text-muted-foreground text-balance">
+          Entre na sua conta para acessar seus dashboards e relatórios financeiros.
+        </p>
+      )}
+      sideImageSrc="/login.svg"
+      sideImageDarkSrc="/dark-login.svg"
+      sideImageAlt="Ilustração de login"
+      mobileLogoLightSrc="/light-logo.svg"
+      mobileLogoDarkSrc="/dark-logo.svg"
+      mobileLogoAlt="DataPro by MD4Tech - Inteligência analítica para negócios"
+      footer={undefined}
+    >
+      <LoginFormWrapper />
+    </AuthShell>
   )
 }

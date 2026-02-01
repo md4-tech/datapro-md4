@@ -1,8 +1,8 @@
-# Guia de Responsividade - BI-SaaS Dashboard
+# Guia de Responsividade - Datapro-MD4 Dashboard
 
 ## Visão Geral
 
-Este documento define os padrões de responsividade para o sistema BI-SaaS Dashboard, garantindo uma experiência consistente em todos os dispositivos.
+Este documento define os padrões de responsividade para o sistema Datapro-MD4 Dashboard, garantindo uma experiência consistente em todos os dispositivos.
 
 ## Breakpoints do Tailwind CSS
 

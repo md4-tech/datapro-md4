@@ -179,7 +179,7 @@ Adicionada uma nova linha "RECEITA BRUTA" acima da linha "TOTAL DESPESAS" no Dat
 
 ### 1. Iniciar o servidor de desenvolvimento
 ```bash
-cd /Users/samueldutra/devinga-dash/bi-saas
+cd /Users/samueldutra/devinga-dash/datapro-md4
 npm run dev
 ```
 

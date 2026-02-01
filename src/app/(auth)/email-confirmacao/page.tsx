@@ -130,7 +130,7 @@ function EmailConfirmacaoContent() {
             <p className="font-medium mb-2">Próximos passos:</p>
             <ol className="list-decimal list-inside space-y-1">
               <li>Acesse sua nova caixa de email</li>
-              <li>Procure pelo email de confirmação da Devinga</li>
+              <li>Procure pelo email de confirmação da MD4 Tech</li>
               <li>Clique no link de confirmação</li>
               <li>Após confirmar, faça login com o novo email</li>
             </ol>
@@ -191,8 +191,8 @@ export default function EmailConfirmacaoPage() {
         {/* Logo */}
         <div className="mb-8 text-center">
           <Image
-            src="/logo_devinga_mobile.png"
-            alt="Devinga Logo"
+            src="/logo_mobile.png"
+            alt="MD4 Tech Logo"
             width={150}
             height={60}
             className="h-15 w-auto mx-auto"

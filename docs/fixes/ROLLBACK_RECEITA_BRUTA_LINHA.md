@@ -226,7 +226,7 @@ const transformToTableData = (reportData: ReportData): DespesaRow[] => {
 
 ```bash
 # 1. Navegar até o diretório do projeto
-cd /Users/samueldutra/devinga-dash/bi-saas
+cd /Users/samueldutra/devinga-dash/datapro-md4
 
 # 2. Criar backup da versão modificada (caso queira recuperar depois)
 cp src/app/\(dashboard\)/dre-gerencial/page.tsx src/app/\(dashboard\)/dre-gerencial/page.tsx.backup-receita-bruta

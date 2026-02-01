@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
+import { Mail, User, Lock } from 'lucide-react'
+import { ThemeSelect } from '@/components/auth/theme-select'
 
 export function RegisterForm() {
   const [fullName, setFullName] = useState('')
@@ -90,42 +92,57 @@ export function RegisterForm() {
     <form onSubmit={handleRegister} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="fullName">Nome Completo</Label>
-        <Input
-          id="fullName"
-          type="text"
-          placeholder="Seu nome"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          required
-          disabled={loading}
-        />
+        <InputGroup>
+          <InputGroupInput
+            id="fullName"
+            type="text"
+            placeholder="Seu nome"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+            disabled={loading}
+          />
+          <InputGroupAddon align="inline-start" aria-hidden="true">
+            <User className="h-4 w-4" />
+          </InputGroupAddon>
+        </InputGroup>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="seu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={loading}
-        />
+        <InputGroup>
+          <InputGroupInput
+            id="email"
+            type="email"
+            placeholder="Digite seu email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={loading}
+          />
+          <InputGroupAddon align="inline-start" aria-hidden="true">
+            <Mail className="h-4 w-4" />
+          </InputGroupAddon>
+        </InputGroup>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={loading}
-          minLength={6}
-        />
+        <InputGroup>
+          <InputGroupInput
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={loading}
+            minLength={6}
+          />
+          <InputGroupAddon align="inline-start" aria-hidden="true">
+            <Lock className="h-4 w-4" />
+          </InputGroupAddon>
+        </InputGroup>
         <p className="text-xs text-muted-foreground">
           Mínimo de 6 caracteres
         </p>
@@ -140,6 +157,8 @@ export function RegisterForm() {
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? 'Criando conta...' : 'Criar conta'}
       </Button>
+
+      <ThemeSelect />
     </form>
   )
 }
