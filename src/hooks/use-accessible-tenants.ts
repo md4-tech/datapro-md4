@@ -55,22 +55,40 @@ export function useAccessibleTenants() {
             setTenants(allTenants || [])
           }
         } else {
-          // Se não for superadmin, buscar apenas o tenant do usuário
-          console.log('useAccessibleTenants: Buscando tenant do usuário')
+          // Se não for superadmin, buscar tenants do perfil + user_tenant_access
+          console.log('useAccessibleTenants: Buscando tenants do usuário')
+
+          const tenantIds = new Set<string>()
 
           if (profile.tenant_id) {
-            const { data: tenant, error } = await supabase
+            tenantIds.add(profile.tenant_id)
+          }
+
+          const { data: accessRows, error: accessError } = await supabase
+            .from('user_tenant_access')
+            .select('tenant_id')
+            .eq('user_id', user.id) as { data: { tenant_id: string }[] | null; error: Error | null }
+
+          if (accessError) {
+            console.error('useAccessibleTenants: Erro ao buscar acessos:', accessError)
+          } else {
+            accessRows?.forEach(row => tenantIds.add(row.tenant_id))
+          }
+
+          const tenantIdList = Array.from(tenantIds)
+          if (tenantIdList.length > 0) {
+            const { data: accessibleTenants, error } = await supabase
               .from('tenants')
               .select('*')
-              .eq('id', profile.tenant_id)
+              .in('id', tenantIdList)
               .eq('is_active', true)
-              .single() as { data: Tenant | null; error: Error | null }
+              .order('name') as { data: Tenant[] | null; error: Error | null }
 
             if (error) {
-              console.error('useAccessibleTenants: Erro ao buscar tenant:', error)
-            } else if (tenant) {
-              console.log(`✅ useAccessibleTenants: Tenant encontrado: ${tenant.name}`)
-              setTenants([tenant])
+              console.error('useAccessibleTenants: Erro ao buscar tenants:', error)
+            } else {
+              console.log(`✅ useAccessibleTenants: ${accessibleTenants?.length || 0} tenants encontrados`)
+              setTenants(accessibleTenants || [])
             }
           }
         }

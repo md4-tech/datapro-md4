@@ -60,10 +60,15 @@ export function UsuariosContent({ currentUserRole, currentUserTenantId, selected
         .select('*')
         .order('created_at', { ascending: false })
 
-      // Admin: apenas usuários do próprio tenant (exclui superadmins)
-      if (currentUserRole === 'admin' && currentUserTenantId) {
+      // Admin: apenas usuários do tenant selecionado (exclui superadmins)
+      if (currentUserRole === 'admin' && (selectedTenantId || currentUserTenantId)) {
+        const effectiveTenantId = selectedTenantId || currentUserTenantId
+        if (!effectiveTenantId) {
+          setUsers([])
+          return
+        }
         usersQuery = usersQuery
-          .eq('tenant_id', currentUserTenantId)
+          .eq('tenant_id', effectiveTenantId)
           .neq('role', 'superadmin')
       }
       

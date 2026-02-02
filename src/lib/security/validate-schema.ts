@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { UserProfile } from '@/types'
+import { hasTenantAccess } from '@/lib/security/tenant-access'
 
 /**
  * Basic schema name validation (format only).
@@ -48,28 +49,23 @@ export async function validateSchemaAccess(
       .select('id')
       .eq('supabase_schema', requestedSchema)
       .eq('is_active', true)
-      .single()
-    
+      .single() as { data: { id: string } | null; error: unknown }
+
     return !!tenant && !error
   }
 
-  // Regular user can only access their own tenant
-  if (profile.tenant_id) {
-    const { data: tenant, error } = await supabase
-      .from('tenants')
-      .select('supabase_schema')
-      .eq('id', profile.tenant_id)
-      .single()
+  const { data: tenant, error } = await supabase
+    .from('tenants')
+    .select('id')
+    .eq('supabase_schema', requestedSchema)
+    .eq('is_active', true)
+    .single() as { data: { id: string } | null; error: unknown }
 
-    if (error || !tenant) {
-      return false
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (tenant as any).supabase_schema === requestedSchema
+  if (error || !tenant) {
+    return false
   }
 
-  return false
+  return hasTenantAccess(supabase, user.id, tenant.id)
 }
 
 /**

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { safeErrorResponse } from '@/lib/api/error-handler'
 import { z } from 'zod'
+import { hasTenantAccess } from '@/lib/security/tenant-access'
 
 const branchSchema = z.object({
   tenant_id: z.string().uuid('ID do tenant deve ser um UUID válido'),
@@ -106,8 +107,11 @@ export async function POST(request: Request) {
     const { tenant_id, branch_code, store_code, descricao, cep, rua, numero, bairro, cidade, estado } = validation.data
 
     // Validate permissions
-    if (currentProfile.role === 'admin' && tenant_id !== currentProfile.tenant_id) {
-      return NextResponse.json({ error: 'Admin só pode criar filiais na própria empresa' }, { status: 403 })
+    if (currentProfile.role === 'admin') {
+      const allowed = await hasTenantAccess(supabase, user.id, tenant_id)
+      if (!allowed) {
+        return NextResponse.json({ error: 'Admin só pode criar filiais em tenants com acesso' }, { status: 403 })
+      }
     }
 
     // Check if branch_code already exists for this tenant
@@ -199,9 +203,13 @@ export async function DELETE(request: Request) {
     }
 
     // Validate permissions
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (currentProfile.role === 'admin' && (branch as any).tenant_id !== currentProfile.tenant_id) {
-      return NextResponse.json({ error: 'Admin só pode deletar filiais da própria empresa' }, { status: 403 })
+    if (currentProfile.role === 'admin') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const branchTenantId = (branch as any).tenant_id as string | null
+      const allowed = await hasTenantAccess(supabase, user.id, branchTenantId)
+      if (!allowed) {
+        return NextResponse.json({ error: 'Admin só pode deletar filiais de tenants com acesso' }, { status: 403 })
+      }
     }
 
     // Delete branch - filter by both branch_code AND tenant_id
@@ -278,9 +286,13 @@ export async function PATCH(request: Request) {
     }
 
     // Validate permissions
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (currentProfile.role === 'admin' && (existingBranch as any).tenant_id !== currentProfile.tenant_id) {
-      return NextResponse.json({ error: 'Admin só pode editar filiais da própria empresa' }, { status: 403 })
+    if (currentProfile.role === 'admin') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const branchTenantId = (existingBranch as any).tenant_id as string | null
+      const allowed = await hasTenantAccess(supabase, user.id, branchTenantId)
+      if (!allowed) {
+        return NextResponse.json({ error: 'Admin só pode editar filiais de tenants com acesso' }, { status: 403 })
+      }
     }
 
     // Update branch - filter by both branch_code AND tenant_id

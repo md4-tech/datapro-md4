@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { hasTenantAccess } from '@/lib/security/tenant-access'
 
 /**
  * DELETE /api/users/delete
@@ -85,11 +86,14 @@ export async function DELETE(request: Request) {
     }
 
     // Regra: Admin só pode deletar usuários do mesmo tenant
-    if (currentUserProfile.role === 'admin' && userToDelete.tenant_id !== currentUserProfile.tenant_id) {
-      return NextResponse.json(
-        { error: 'You can only delete users from your own tenant' },
-        { status: 403 }
-      )
+    if (currentUserProfile.role === 'admin') {
+      const allowed = await hasTenantAccess(supabase, user.id, userToDelete.tenant_id)
+      if (!allowed) {
+        return NextResponse.json(
+          { error: 'You can only delete users from tenants you can access' },
+          { status: 403 }
+        )
+      }
     }
 
     // Criar cliente admin do Supabase (necessário para deletar do auth.users)
