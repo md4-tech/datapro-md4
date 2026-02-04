@@ -14,7 +14,7 @@
 - `npm start` runs the production server.
 - `npm run lint` runs ESLint checks.
 - `npm run clean` removes Next.js cache; `npm run clean:all` resets dependencies and cache.
-- Cache helper: `./scripts/clean-cache.sh`.
+- Cache helper: `./scripts/clean-cache.sh`..
 
 ## Coding Style & Naming Conventions
 - Use TypeScript/React patterns already present in `src/`; keep components modular and colocated by feature.
